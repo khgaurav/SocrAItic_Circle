@@ -42,7 +42,7 @@ class DebaterAgent:
 
         if feedback:
             prompt += f"\nFeedback on your previous argument:\n'''{feedback}'''\nPlease incorporate this feedback into your response.\n"
-
+        prompt += "\nVery important: Your argument must be 520 words or less (approximately 4 minutes of speaking time at 130 words per minute). You will be penalised if you go over this limit."
         prompt += "\nGenerate your argument:"
 
         # Add current prompt to context before calling LLM

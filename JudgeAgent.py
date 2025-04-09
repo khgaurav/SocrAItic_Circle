@@ -37,9 +37,33 @@ class JudgeAgent:
             "You are an impartial judge evaluating a debate. "
             "Focus on logical consistency, evidence, rhetorical strength, and factual accuracy. "
             "Provide constructive feedback to help the debaters improve."
+            "Use approximately 520 words"
         )
         self.context = [{"role": "system", "content": self.system_prompt}]
         print(f"Initialized Judge: {self.name} (Model: {self.model_name})")
+        
+    def check_word_count(self, argument: str, debater_name: str) -> bool:
+        """
+        Checks if a debater's argument meets the word count requirements.
+        
+        Args:
+            argument (str): The debater's argument text
+            debater_name (str): Name of the debater
+            
+        Returns:
+            dict: Result containing word count, compliance status, and feedback
+        """
+        words = argument.split()
+        word_count = len(words)
+        target = 520
+
+        print(f"\n[JUDGE] Word Count Check - {debater_name}: {word_count} words")
+        
+        # Determine compliance
+        if word_count <= target:
+            return True
+        else:
+            return False
 
     def evaluate_argument(self, argument: str, debater_name: str, topic: str, round_num: int) -> str:
         """
@@ -55,7 +79,6 @@ class JudgeAgent:
             str: Constructive feedback for the debater.
         """
         print(f"{self.name} evaluating argument from {debater_name}...")
-
         if self.use_strategic_layers:
             # Use multiple prompts for focused analysis
             full_feedback = f"Feedback for {debater_name} on Round {round_num} (Topic: {topic}):\nArgument:\n'''{argument}'''\n\nAnalysis:\n"
@@ -80,6 +103,8 @@ class JudgeAgent:
             )
             feedback = call_llm_api(prompt, self.model_name) # Context management might be needed
 
+        if self.check_word_count(argument, debater_name):
+            feedback += f"The given argument was also over the 520-word requirement.\n"            
         print(f"{self.name} generated feedback for {debater_name}.")
         # In a real system, you might parse this feedback, calculate scores, etc.
         return feedback

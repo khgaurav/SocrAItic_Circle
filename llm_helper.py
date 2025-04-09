@@ -1,8 +1,8 @@
 import os
 from typing import List, Dict, Any
 import sys
-os.environ["GEMINI_API_KEY"] = ""
-os.environ["PERPLEXITY_API_KEY"] = ""
+os.environ["GEMINI_API_KEY"] = "AIzaSyD4xPZA7-yJ4KZ2B1gk85OBFHeTsAlPGKw"
+os.environ["PERPLEXITY_API_KEY"] = "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"
 def call_llm_api(prompt: str, model_name: str = "gpt-4", context: List[Dict[str, str]] = None) -> str:
     """
     Function to call Gemini or Perplexity API based on the model name.
@@ -21,67 +21,71 @@ def call_llm_api(prompt: str, model_name: str = "gpt-4", context: List[Dict[str,
     
     # Handle Gemini models
     if model_name.startswith('gemini'):
-        try:
-            from google import genai
-            
-            # Initialize with API key from environment variable
-            api_key = os.getenv("GEMINI_API_KEY")
-            client = genai.Client(api_key=api_key)
-            
-            # Convert context to format expected by Gemini
-            if context:
-                # For Gemini, we need to flatten the context messages
-                contents = []
-                for msg in context:
-                    contents.append(msg["content"])
-                contents.append(prompt)
-                
-                response = client.models.generate_content(
-                    model=model_name,
-                    contents=contents
-                )
-            else:
-                response = client.models.generate_content(
-                    model=model_name,
-                    contents=prompt
-                )
-            
-            return response.text
-            
-        except Exception as e:
-            print(f"Error calling Gemini API: {e}")
-            return f"Error: Could not get response from {model_name}."
-    
+        return call_google(prompt, model_name, context)    
     # Handle Perplexity models (sonar or sonar-pro)
     elif model_name.startswith('sonar'):
-        try:
-            from openai import OpenAI
-            
-            # Initialize the client with custom base URL for Perplexity
-            api_key = os.getenv("PERPLEXITY_API_KEY")
-            client = OpenAI(api_key=api_key, base_url="https://api.perplexity.ai")
-            
-            # Format messages for chat completion ensuring alternating roles
-            if context:
-                messages = context.copy()
-                if messages and messages[-1].get("role") == "user":
-                    messages.append({"role": "assistant", "content": ""})
-            else:
-                messages = []
-            messages.append({"role": "user", "content": prompt})
-            
-            response = client.chat.completions.create(
-                model=model_name,
-                messages=messages,
-            )
-            
-            return response.choices[0].message.content
-            
-        except Exception as e:
-            print(f"Error calling Perplexity API: {e}")
-            sys.exit(f"Error: Could not get response from {model_name}.")
-    
+        return call_perplexity(prompt, model_name, context)
     # Default case for unsupported models
     else:
         print(f"Model {model_name} not supported. Please use a Gemini or Perplexity model.")
-        return f"Error: Unsupported model {model_name}."
+        raise
+
+def call_perplexity(prompt: str, model_name: str = "sonar-pro", context: List[Dict[str, str]] = None):
+    try:
+        from openai import OpenAI
+        # Initialize with API key from environment variable
+        api_key = os.getenv("PERPLEXITY_API_KEY")
+        client = OpenAI(api_key=api_key, base_url="https://api.perplexity.ai")
+        
+        # Prepare messages for the chat completion
+        messages = []
+        
+        # Add context if provided
+        if context:
+            for msg in context:
+                messages.append({"role": msg.get("role", "user"), "content": msg.get("content", "")})
+        
+        # Add the current prompt
+        messages.append({"role": "user", "content": prompt})
+        response = client.chat.completions.create(
+            model=model_name,
+            messages=messages
+        )
+        
+        return response.choices[0].message.content
+        
+    except Exception as e:
+        print(f"Error calling Perplexity API: {e}")
+        raise
+
+
+def call_google(prompt: str, model_name: str = "gpt-4", context: List[Dict[str, str]] = None):
+    try:
+        from google import genai
+        
+        # Initialize with API key from environment variable
+        api_key = os.getenv("GEMINI_API_KEY")
+        client = genai.Client(api_key=api_key)
+        
+        # Convert context to format expected by Gemini
+        if context:
+            # For Gemini, we need to flatten the context messages
+            contents = []
+            for msg in context:
+                contents.append(msg["content"])
+            contents.append(prompt)
+            response = client.models.generate_content(
+                model=model_name,
+                contents=contents
+            )
+        else:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=prompt
+            )
+        
+        return response.text
+        
+    except Exception as e:
+        print(f"Error calling Gemini API: {e}")
+        raise

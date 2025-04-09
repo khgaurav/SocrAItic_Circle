@@ -45,7 +45,7 @@ class DebateOrchestrator:
             feedback_a = self.judge.evaluate_argument(argument_a, self.debater_a.name, self.topic, i)
             print(f"Feedback from {self.judge.name}: {feedback_a}")
             self.debate_history.append({"round": i, "debater": self.debater_a.name, "argument": argument_a, "feedback": feedback_a})
-            self.debater_a.receive_feedback(feedback_a) # Let agent process feedback
+            # self.debater_a.receive_feedback(feedback_a) # Let agent process feedback
 
             # Debater B's turn
             print(f"\n{self.debater_b.name}'s Turn:")
@@ -54,7 +54,7 @@ class DebateOrchestrator:
             feedback_b = self.judge.evaluate_argument(argument_b, self.debater_b.name, self.topic, i)
             print(f"Feedback from {self.judge.name}: {feedback_b}")
             self.debate_history.append({"round": i, "debater": self.debater_b.name, "argument": argument_b, "feedback": feedback_b})
-            self.debater_b.receive_feedback(feedback_b) # Let agent process feedback
+            # self.debater_b.receive_feedback(feedback_b) # Let agent process feedback
 
 
         # --- End of Debate ---

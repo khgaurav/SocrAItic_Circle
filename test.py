@@ -20,8 +20,8 @@ if __name__ == "__main__":
 
     judge_agent = JudgeAgent(
         name="Fair AI Judge",
-        model_name="gemini-2.0-flash-thinking-exp-01-21", # Changed to Gemini model
-        use_strategic_layers=False
+        model_name="gemini-2.0-flash-lite", # Changed to Gemini model
+        use_strategic_layers=True
     )
 
 
