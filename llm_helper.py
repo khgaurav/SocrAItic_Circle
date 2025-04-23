@@ -1,8 +1,8 @@
 import os
 from typing import List, Dict, Any
 import sys
-os.environ["GEMINI_API_KEY"] = "AIzaSyBRWNehuunMejQSut1DPBFOEZI8o4jOEUs"
-os.environ["PERPLEXITY_API_KEY"] = "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"
+os.environ["GEMINI_API_KEY"] = "<API_KEY>"
+os.environ["PERPLEXITY_API_KEY"] = "<API_KEY>"
 def call_llm_api(prompt: str, model_name: str = "gpt-4", context: List[Dict[str, str]] = None) -> str:
     """
     Function to call Gemini or Perplexity API based on the model name.
