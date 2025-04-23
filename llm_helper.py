@@ -1,8 +1,8 @@
 import os
 from typing import List, Dict, Any
 import sys
-os.environ["GEMINI_API_KEY"] = "AIzaSyD4xPZA7-yJ4KZ2B1gk85OBFHeTsAlPGKw"
-os.environ["PERPLEXITY_API_KEY"] = "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"
+os.environ["GEMINI_API_KEY"] = "AIzaSyBRWNehuunMejQSut1DPBFOEZI8o4jOEUs"
+os.environ["PERPLEXITY_API_KEY"] = "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"
 def call_llm_api(prompt: str, model_name: str = "gpt-4", context: List[Dict[str, str]] = None) -> str:
     """
     Function to call Gemini or Perplexity API based on the model name.
@@ -30,7 +30,7 @@ def call_llm_api(prompt: str, model_name: str = "gpt-4", context: List[Dict[str,
         print(f"Model {model_name} not supported. Please use a Gemini or Perplexity model.")
         raise
 
-def call_perplexity(prompt: str, model_name: str = "sonar-pro", context: List[Dict[str, str]] = None):
+def call_perplexity(prompt: str, model_name: str = "sonar", context: List[Dict[str, str]] = None):
     try:
         from openai import OpenAI
         # Initialize with API key from environment variable
